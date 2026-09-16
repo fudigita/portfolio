@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="description" content="Fudigita — brand, design, web and growth systems for businesses ready for what's next.">
+  <title>Fudigita — Build What's Next.</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#050505;
+      --bg2:#0a0a0a;
+      --surface:#101010;
+      --surface2:#151515;
+      --text:#f5f5f0;
+      --muted:#8d8d87;
+      --line:rgba(255,255,255,.11);
+      --line2:rgba(255,255,255,.18);
+      --white:#fff;
+      --max:1240px;
+      --radius:26px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:auto}
+    body{
+      margin:0;background:var(--bg);color:var(--text);
+      font-family:"Space Grotesk",ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      overflow-x:hidden;cursor:default;
+    }
+    body:before{
+      content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
+      background:radial-gradient(circle at 50% -20%,rgba(255,255,255,.07),transparent 34%);
+    }
+    a{color:inherit;text-decoration:none}
+    button{font:inherit}
+    .container{width:min(calc(100% - 48px),var(--max));margin:auto}
+    .noise{position:fixed;inset:0;z-index:49;pointer-events:none;opacity:.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E")}
+
+    /* NAV */
+    .nav{
+      position:fixed;top:0;left:0;width:100%;height:78px;z-index:40;
+      border-bottom:1px solid transparent;
+      background:linear-gradient(to bottom,rgba(5,5,5,.86),rgba(5,5,5,.35));
+      backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    }
+    .nav-inner{height:100%;display:flex;align-items:center;justify-content:space-between}
+    .logo{font-size:24px;font-weight:600;letter-spacing:-1.6px}
+    .nav-links{display:flex;align-items:center;gap:34px;font-size:13px;color:#aaa}
+    .nav-links a{transition:.25s;color:#aaa}
+    .nav-links a:hover{color:#fff}
+    .preorder{
+      display:inline-flex;align-items:center;gap:9px;padding:11px 17px;border:1px solid rgba(255,255,255,.28);
+      border-radius:999px;background:#fff;color:#050505;font-weight:750;font-size:12px;
+      box-shadow:0 0 0 rgba(255,255,255,0);transition:.3s;
+    }
+    .preorder:hover{box-shadow:0 0 30px rgba(255,255,255,.16);transform:translateY(-1px)}
+
+    /* HERO */
+    .hero{height:100vh;min-height:700px;position:relative;overflow:hidden}
+    #heroCanvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+    .hero:after{
+      content:"";position:absolute;inset:0;pointer-events:none;
+      background:linear-gradient(90deg,rgba(5,5,5,.72) 0%,rgba(5,5,5,.18) 52%,rgba(5,5,5,.55) 100%),
+                 linear-gradient(0deg,var(--bg) 0%,transparent 24%,transparent 70%,rgba(5,5,5,.45) 100%);
+    }
+    .hero-content{position:relative;z-index:3;height:100%;display:flex;align-items:center}
+    .hero-copy{max-width:850px;padding-top:60px}
+    .kicker{font-size:11px;letter-spacing:2.2px;text-transform:uppercase;color:#999;font-weight:700;margin-bottom:26px}
+    h1{
+      margin:0;font-size:clamp(70px,11.5vw,166px);line-height:.82;
+      letter-spacing:-7px;font-weight:600;
+    }
+    h1 span{display:block}
+    h1 span:nth-child(2){font-weight:300;font-style:italic}
+    h1 span:nth-child(3){font-weight:600}
+    .section-title,.story-step h2,.final h2{
+      font-weight:500;
+    }
+    .kicker,.section-kicker,.card-num,.story-index,.story-label,.scroll-cue,
+    .metric span,.quote small{
+      font-family:"DM Mono",monospace;
+    }
+    .hero-sub{max-width:520px;color:#a4a49e;font-size:18px;line-height:1.55;margin:34px 0 0}
+    .scroll-cue{
+      position:absolute;left:0;bottom:34px;display:flex;align-items:center;gap:12px;
+      font-size:10px;letter-spacing:1.8px;text-transform:uppercase;color:#777;
+    }
+    .scroll-cue i{width:45px;height:1px;background:#777;display:block;position:relative;overflow:hidden}
+    .scroll-cue i:after{content:"";position:absolute;left:-45px;top:0;width:45px;height:1px;background:#fff;animation:line 1.8s infinite}
+    @keyframes line{to{left:45px}}
+
+    /* STORY */
+    .story{position:relative}
+    .story-pin{height:100vh;min-height:680px;display:flex;align-items:center;position:relative}
+    .story-bg{
+      position:absolute;inset:0;opacity:.55;pointer-events:none;
+      background:
+        radial-gradient(circle at 72% 50%,rgba(255,255,255,.07),transparent 26%),
+        radial-gradient(circle at 30% 70%,rgba(255,255,255,.04),transparent 30%);
+    }
+    .story-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;position:relative;z-index:2}
+    .story-visual{
+      height:560px;border:1px solid var(--line);border-radius:34px;position:relative;overflow:hidden;
+      background:linear-gradient(145deg,#151515,#070707);
+    }
+    .orbit{position:absolute;left:50%;top:50%;border:1px solid rgba(255,255,255,.13);border-radius:50%;transform:translate(-50%,-50%) rotate(20deg)}
+    .o1{width:390px;height:390px}.o2{width:260px;height:460px}.o3{width:500px;height:230px}
+    .core{
+      position:absolute;left:50%;top:50%;width:115px;height:115px;border-radius:50%;
+      transform:translate(-50%,-50%);background:#f3f3ee;
+      box-shadow:0 0 100px rgba(255,255,255,.18),inset -15px -15px 35px rgba(0,0,0,.16);
+    }
+    .core:after{content:"";position:absolute;inset:25%;border-radius:50%;background:#111}
+    .story-label{
+      position:absolute;left:24px;bottom:22px;font-size:10px;letter-spacing:1.6px;text-transform:uppercase;color:#777
+    }
+    .story-text{position:relative;min-height:430px}
+    .story-step{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;opacity:0}
+    .story-step:first-child{opacity:1}
+    .story-index{font-size:11px;color:#777;letter-spacing:2px;margin-bottom:20px}
+    .story-step h2{font-size:clamp(45px,6vw,82px);line-height:.9;letter-spacing:-4px;margin:0;max-width:650px}
+    .story-step p{font-size:17px;line-height:1.6;color:#96968f;max-width:510px;margin:27px 0 0}
+    .reveal-line{overflow:hidden}
+    .reveal-line span{display:block}
+
+    /* SERVICES */
+    section{padding:150px 0}
+    .section-kicker{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#777;margin-bottom:22px}
+    .section-title{font-size:clamp(48px,7vw,92px);line-height:.9;letter-spacing:-5px;margin:0;max-width:850px}
+    .section-intro{color:#8f8f89;max-width:480px;font-size:16px;line-height:1.65;margin-top:25px}
+
+    .bento{display:grid;grid-template-columns:repeat(12,1fr);gap:12px;margin-top:65px}
+    .card{
+      position:relative;min-height:320px;padding:29px;border:1px solid var(--line);border-radius:var(--radius);
+      background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.015));
+      overflow:hidden;transform-style:preserve-3d;transition:border-color .3s,background .3s;
+    }
+    .card:before{
+      content:"";position:absolute;inset:-1px;opacity:0;transition:.3s;
+      background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.14),transparent 30%);
+    }
+    .card:hover{border-color:var(--line2);background:#111}
+    .card:hover:before{opacity:1}
+    .card > *{position:relative;z-index:2}
+    .card:nth-child(1){grid-column:span 7;min-height:390px}
+    .card:nth-child(2){grid-column:span 5}
+    .card:nth-child(3){grid-column:span 5}
+    .card:nth-child(4){grid-column:span 7}
+    .card-num{font-size:10px;color:#777;letter-spacing:1.5px}
+    .card h3{font-size:34px;letter-spacing:-1.7px;margin:85px 0 10px}
+    .card p{color:#888;font-size:14px;max-width:390px;margin:0;line-height:1.6}
+    .card-icon{position:absolute;right:30px;top:30px;font-size:34px;color:#555}
+    .mini-grid{position:absolute;right:28px;bottom:28px;display:grid;grid-template-columns:repeat(5,8px);gap:5px}
+    .mini-grid i{width:8px;height:8px;border:1px solid #555;border-radius:50%}
+    .mini-grid i:nth-child(3n){background:#eee;border-color:#eee}
+
+    /* METRIC BAND */
+    .metrics{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:0}
+    .metric-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+    .metric{padding:55px 28px;border-right:1px solid var(--line)}
+    .metric:last-child{border:0}
+    .metric strong{display:block;font-size:38px;letter-spacing:-2px}
+    .metric span{color:#777;font-size:11px;text-transform:uppercase;letter-spacing:1.4px}
+
+    /* SOCIAL */
+    .quotes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:65px}
+    .quote{border:1px solid var(--line);border-radius:var(--radius);padding:31px;min-height:280px;background:#0b0b0b;display:flex;flex-direction:column;justify-content:space-between}
+    .quote p{font-size:19px;line-height:1.45;letter-spacing:-.4px;margin:0}
+    .quote small{color:#777;font-size:11px;letter-spacing:1px;text-transform:uppercase}
+
+    /* CTA */
+    .final{min-height:90vh;display:flex;align-items:center;position:relative;overflow:hidden}
+    .final:before{
+      content:"";position:absolute;width:700px;height:700px;border-radius:50%;left:50%;top:50%;
+      transform:translate(-50%,-50%);border:1px solid rgba(255,255,255,.06);
+      box-shadow:0 0 180px rgba(255,255,255,.04);
+    }
+    .final-inner{position:relative;text-align:center;z-index:2;width:100%}
+    .final h2{font-size:clamp(65px,10vw,145px);line-height:.84;letter-spacing:-8px;margin:0 auto;max-width:1050px}
+    .final p{max-width:490px;margin:30px auto;color:#85857f;line-height:1.6}
+    .magnetic{
+      display:inline-flex;align-items:center;justify-content:center;margin-top:26px;width:145px;height:145px;
+      border-radius:50%;background:#f4f4ef;color:#050505;font-weight:800;font-size:13px;
+      border:0;cursor:pointer;transition:transform .2s,box-shadow .3s;
+      box-shadow:0 0 0 rgba(255,255,255,0);
+    }
+    .magnetic:hover{box-shadow:0 0 55px rgba(255,255,255,.15)}
+
+    footer{border-top:1px solid var(--line);padding:30px 0 35px}
+    .footer-inner{display:flex;justify-content:space-between;align-items:center;color:#666;font-size:11px}
+    .footer-logo{font-size:20px;font-weight:600;color:#eee;letter-spacing:-1px;font-style:italic}
+    .footer-links{display:flex;gap:22px}
+    .footer-links a:hover{color:#fff}
+
+    /* MOBILE */
+    @media(max-width:800px){
+      .container{width:min(calc(100% - 30px),var(--max))}
+      .nav{height:68px}.nav-links a{display:none}.nav-links{gap:0}
+      .hero{min-height:650px}
+      h1{font-size:64px;letter-spacing:-4px}
+      .hero-sub{font-size:16px;max-width:430px}
+      .story-pin{height:auto;min-height:0;padding:100px 0}
+      .story-grid{grid-template-columns:1fr;gap:35px}
+      .story-visual{height:390px}
+      .story-text{min-height:430px}
+      .story-step{position:absolute}
+      section{padding:100px 0}
+      .section-title{letter-spacing:-3px}
+      .bento{grid-template-columns:1fr}
+      .card,.card:nth-child(1),.card:nth-child(2),.card:nth-child(3),.card:nth-child(4){grid-column:span 1;min-height:270px}
+      .card h3{margin-top:65px;font-size:29px}
+      .metric-grid{grid-template-columns:1fr 1fr}
+      .metric{padding:35px 18px;border-bottom:1px solid var(--line)}
+      .metric strong{font-size:30px}
+      .quotes{grid-template-columns:1fr}
+      .quote{min-height:230px}
+      .final{min-height:75vh}
+      .final h2{letter-spacing:-5px}
+      .footer-inner{flex-direction:column;align-items:flex-start;gap:18px}
+      .system-placeholder{display:block}
+    }
+    @media(prefers-reduced-motion:reduce){
+      *,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}
+    }
+  </style>
+</head>
+
+<body>
+<div class="noise"></div>
+
+<header class="nav">
+  <div class="container nav-inner">
+    <a href="#" class="logo magnetic-target">fudigita.</a>
+    <nav class="nav-links">
+      <a href="#technology">Technology</a>
+      <a href="#specs">Specs</a>
+      <a href="#support">Support</a>
+      <a href="#contact" class="preorder magnetic-target">Start a project <span>↗</span></a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero" id="top">
+    <canvas id="heroCanvas"></canvas>
+    <div class="container hero-content">
+      <div class="hero-copy">
+        <div class="kicker hero-anim">Digital growth, redesigned.</div>
+        <h1>
+          <span class="hero-line">The</span>
+          <span class="hero-line">future</span>
+          <span class="hero-line">is built.</span>
+        </h1>
+        <p class="hero-sub hero-anim">
+          Fudigita turns business ideas into brands, digital experiences and growth systems built for what's next.
+        </p>
+      </div>
+      <div class="scroll-cue hero-anim"><i></i> Scroll to explore</div>
+    </div>
+  </section>
+
+  <section class="story" id="technology">
+    <div class="story-pin">
+      <div class="story-bg"></div>
+      <div class="container story-grid">
+        <div class="story-visual" data-parallax>
+          <div class="orbit o1"></div><div class="orbit o2"></div><div class="orbit o3"></div>
+          <div class="core"></div>
+          <div class="story-label">One connected growth system</div>
+        </div>
+
+        <div class="story-text">
+          <article class="story-step">
+            <div class="story-index">01 — FOUNDATION</div>
+            <h2>Make them<br>remember you.</h2>
+            <p>Brand identity, logo systems and creative direction that create a recognizable foundation for your business.</p>
+          </article>
+          <article class="story-step">
+            <div class="story-index">02 — PRESENCE</div>
+            <h2>Give your<br>brand a place.</h2>
+            <p>From business websites and landing pages to e-commerce and web applications, we turn identity into experience.</p>
+          </article>
+          <article class="story-step">
+            <div class="story-index">03 — DEMAND</div>
+            <h2>Put it in<br>front of people.</h2>
+            <p>SEO, Google Ads, social media and content systems designed to make your digital presence discoverable.</p>
+          </article>
+          <article class="story-step">
+            <div class="story-index">04 — GROWTH</div>
+            <h2>Turn attention<br>into action.</h2>
+            <p>B2B and B2C lead-generation systems connect visibility with conversations, customers and long-term growth.</p>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="specs">
+    <div class="container">
+      <div class="section-kicker">The Fudigita system</div>
+      <h2 class="section-title split-title">Everything your business needs. Nothing you don't.</h2>
+      <p class="section-intro">One team across brand, design, web and growth — designed to work together from the first idea to the next customer.</p>
+
+      <div class="bento">
+        <article class="card tilt">
+          <span class="card-num">01 / BRAND</span>
+          <span class="card-icon">◌</span>
+          <h3>Brand Identity</h3>
+          <p>Logo, visual language and creative direction that make your business instantly recognizable.</p>
+          <div class="mini-grid"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        </article>
+
+        <article class="card tilt">
+          <span class="card-num">02 / DESIGN</span>
+          <span class="card-icon">⌁</span>
+          <h3>UI / UX</h3>
+          <p>Simple interfaces built around clarity, usability and conversion.</p>
+        </article>
+
+        <article class="card tilt">
+          <span class="card-num">03 / WEB</span>
+          <span class="card-icon">↗</span>
+          <h3>Digital Presence</h3>
+          <p>Business websites, landing pages, e-commerce and web applications.</p>
+        </article>
+
+        <article class="card tilt">
+          <span class="card-num">04 / GROWTH</span>
+          <span class="card-icon">+</span>
+          <h3>Demand & Leads</h3>
+          <p>SEO, paid acquisition, social, content, LinkedIn outreach and email campaigns that create opportunities.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="metrics">
+    <div class="container metric-grid">
+      <div class="metric"><strong>01</strong><span>Connected system</span></div>
+      <div class="metric"><strong>04</strong><span>Core disciplines</span></div>
+      <div class="metric"><strong>∞</strong><span>Ways to grow</span></div>
+      <div class="metric"><strong>→</strong><span>What's next</span></div>
+    </div>
+  </section>
+
+  <section id="support">
+    <div class="container">
+      <div class="section-kicker">Why Fudigita</div>
+      <h2 class="section-title split-title">Stop managing fragments. Start building momentum.</h2>
+      <p class="section-intro">Your website should support your marketing. Your brand should support your content. Your marketing should support your sales. That's the system.</p>
+
+      <div class="quotes">
+        <article class="quote">
+          <p>“A brand is more than a logo. It's the system people experience every time they meet your business.”</p>
+          <small>Brand / Identity</small>
+        </article>
+        <article class="quote">
+          <p>“Your digital presence should not just exist. It should have a job — attract, explain and convert.”</p>
+          <small>Web / Experience</small>
+        </article>
+        <article class="quote">
+          <p>“Growth starts when every touchpoint moves in the same direction.”</p>
+          <small>Marketing / Leads</small>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="final" id="contact">
+    <div class="container final-inner">
+      <div class="section-kicker">Your next move</div>
+      <h2>What comes next for your business?</h2>
+      <p>Bring us the idea, the problem or the ambition. We'll help turn the next step into something people can see, use and remember.</p>
+      <a href="mailto:fudigita@gmail.com" class="magnetic magnetic-target">Let's talk ↗</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container footer-inner">
+    <div class="footer-logo">fudigita.</div>
+    <div>Brand · Design · Web · Marketing · Growth</div>
+    <div class="footer-links">
+      <a href="#technology">Technology</a>
+      <a href="#specs">Specs</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  gsap.registerPlugin(ScrollTrigger);
+
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const mobile = window.matchMedia("(max-width: 800px)").matches;
+
+  /* ---------------------------------------------------------
+     Scroll-linked procedural product visual.
+     It is a lightweight canvas sequence generated at runtime,
+     so the page needs no external image assets.
+  --------------------------------------------------------- */
+  const canvas = document.getElementById("heroCanvas");
+  const ctx = canvas.getContext("2d", {alpha:true});
+  let dpr = Math.min(window.devicePixelRatio || 1, 2);
+  let W, H, progress = 0;
+
+  function resizeCanvas(){
+    W = window.innerWidth; H = window.innerHeight;
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = W*dpr; canvas.height = H*dpr;
+    canvas.style.width = W+"px"; canvas.style.height = H+"px";
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    draw();
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    const p = progress;
+    const cx = W*.70, cy = H*.51;
+    const base = Math.min(W,H)*.16;
+    const scale = .72 + p*.34;
+    const r = base*scale;
+    const rot = p*Math.PI*1.7;
+
+    const glow = ctx.createRadialGradient(cx,cy,0,cx,cy,r*3.1);
+    glow.addColorStop(0,"rgba(255,255,255,.10)");
+    glow.addColorStop(.38,"rgba(255,255,255,.025)");
+    glow.addColorStop(1,"rgba(0,0,0,0)");
+    ctx.fillStyle=glow;ctx.beginPath();ctx.arc(cx,cy,r*3.1,0,Math.PI*2);ctx.fill();
+
+    ctx.save();
+    ctx.translate(cx,cy);ctx.rotate(rot);
+    for(let i=0;i<6;i++){
+      ctx.rotate(Math.PI/3);
+      ctx.strokeStyle=`rgba(255,255,255,${.055+i*.012})`;
+      ctx.lineWidth=1;
+      ctx.beginPath();
+      ctx.ellipse(0,0,r*(1.45+i*.17),r*(.34+i*.045),0,0,Math.PI*2);
+      ctx.stroke();
+    }
+
+    const g=ctx.createRadialGradient(-r*.25,-r*.28,2,0,0,r*1.2);
+    g.addColorStop(0,"#ffffff");g.addColorStop(.5,"#bdbdb8");g.addColorStop(1,"#30302e");
+    ctx.fillStyle=g;
+    ctx.shadowColor="rgba(255,255,255,.14)";ctx.shadowBlur=40;
+    ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);ctx.fill();
+    ctx.shadowBlur=0;
+
+    ctx.strokeStyle="rgba(0,0,0,.35)";ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(0,0,r*.66,0,Math.PI*2);ctx.stroke();
+    ctx.fillStyle="#090909";ctx.beginPath();ctx.arc(0,0,r*.27,0,Math.PI*2);ctx.fill();
+    ctx.restore();
+
+    /* Fine particles */
+    for(let i=0;i<55;i++){
+      const a=i*2.399 + p*3;
+      const rr=r*(1.9+(i%7)*.19);
+      const x=cx+Math.cos(a)*rr, y=cy+Math.sin(a)*rr*.55;
+      const alpha=.06+(i%5)*.012;
+      ctx.fillStyle=`rgba(255,255,255,${alpha})`;
+      ctx.fillRect(x,y,1,1);
+    }
+  }
+
+  resizeCanvas();
+  window.addEventListener("resize", resizeCanvas);
+
+  if(!reduce){
+    gsap.to({v:0},{
+      v:1,ease:"none",
+      scrollTrigger:{
+        trigger:".hero",start:"top top",end:"bottom top",scrub:true
+      },
+      onUpdate:function(){progress=this.targets()[0].v;draw()}
+    });
+
+    gsap.from(".hero-line",{
+      yPercent:110,opacity:0,filter:"blur(12px)",duration:1.15,stagger:.12,ease:"power4.out",delay:.15
+    });
+    gsap.from(".hero-anim",{
+      y:22,opacity:0,filter:"blur(10px)",duration:.9,stagger:.12,ease:"power3.out",delay:.55
+    });
+  }
+
+  /* Story scroll choreography */
+  const steps = gsap.utils.toArray(".story-step");
+  if(!reduce && !mobile){
+    const tl=gsap.timeline({
+      scrollTrigger:{
+        trigger:".story",start:"top top",end:()=>"+="+steps.length*900,pin:".story-pin",
+        scrub:1.1,anticipatePin:1
+      }
+    });
+    steps.forEach((step,i)=>{
+      if(i===0) tl.to(step,{opacity:1,duration:.5},0);
+      else{
+        tl.to(steps[i-1],{opacity:0,y:-35,filter:"blur(10px)",duration:.45});
+        tl.fromTo(step,{opacity:0,y:35,filter:"blur(10px)"},{opacity:1,y:0,filter:"blur(0px)",duration:.6});
+      }
+    });
+    gsap.to(".story-visual",{yPercent:-7,ease:"none",scrollTrigger:{trigger:".story",start:"top bottom",end:"bottom top",scrub:true}});
+  } else if(!reduce){
+    steps.forEach((s,i)=>gsap.fromTo(s,{opacity:0,y:25},{opacity:1,y:0,duration:.7,scrollTrigger:{trigger:s,start:"top 78%",toggleActions:"play none none reverse"}}));
+  }
+
+  /* Split-ish heading reveals without a dependency */
+  document.querySelectorAll(".split-title").forEach(el=>{
+    const text=el.textContent;
+    el.innerHTML=text.split(" ").map(w=>`<span style="display:inline-block;overflow:hidden"><span style="display:inline-block">${w}&nbsp;</span></span>`).join("");
+    if(!reduce){
+      gsap.from(el.querySelectorAll("span span"),{
+        yPercent:110,opacity:0,duration:.8,stagger:.025,ease:"power3.out",
+        scrollTrigger:{trigger:el,start:"top 82%",once:true}
+      });
+    }
+  });
+
+  /* Bento card tilt + glow */
+  if(!mobile){
+    document.querySelectorAll(".tilt").forEach(card=>{
+      card.addEventListener("pointermove",e=>{
+        const r=card.getBoundingClientRect();
+        const x=e.clientX-r.left,y=e.clientY-r.top;
+        const rx=(y/r.height-.5)*-5, ry=(x/r.width-.5)*5;
+        card.style.setProperty("--mx",(x/r.width*100)+"%");
+        card.style.setProperty("--my",(y/r.height*100)+"%");
+        gsap.to(card,{rotationX:rx,rotationY:ry,duration:.25,ease:"power2.out"});
+      });
+      card.addEventListener("pointerleave",()=>gsap.to(card,{rotationX:0,rotationY:0,duration:.5,ease:"power3.out"}));
+    });
+  }
+
+  /* Magnetic CTA */
+  if(!reduce && !mobile){
+    document.querySelectorAll(".magnetic-target").forEach(el=>{
+      el.addEventListener("pointermove",e=>{
+        const r=el.getBoundingClientRect();
+        const x=e.clientX-(r.left+r.width/2),y=e.clientY-(r.top+r.height/2);
+        gsap.to(el,{x:x*.18,y:y*.18,duration:.35,ease:"power3.out"});
+      });
+      el.addEventListener("pointerleave",()=>gsap.to(el,{x:0,y:0,duration:.5,ease:"elastic.out(1,.5)"}));
+    });
+  }
+
+  /* Cursor affordance */
+  if(!mobile){
+    document.querySelectorAll("a,.tilt,.magnetic").forEach(el=>{
+      el.addEventListener("mouseenter",()=>document.body.style.cursor="pointer");
+      el.addEventListener("mouseleave",()=>document.body.style.cursor="default");
+    });
+  }
+})();
+</script>
+</body>
+</html>
